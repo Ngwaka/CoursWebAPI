@@ -15,7 +15,7 @@ namespace Northwind2
             // enregistre la classe de contexte de donnees comme service en lui indiquant la chaine de connexion a utiliser
             string? connect = builder.Configuration.GetConnectionString("Northwind2Connect");
             builder.Services.AddDbContext<ContexteNorthwind>(options =>
-                options.UseSqlServer(connect));
+                options.UseSqlServer(connect ));
 
 
 

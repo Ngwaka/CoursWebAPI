@@ -47,6 +47,13 @@ namespace Northwind2.Data
                 entity.Property(e => e.Fonction).HasMaxLength(40);
                 entity.Property(e => e.Civilite).HasMaxLength(40);
 
+                // Relation de la table Employe sur elle-même 
+                entity.HasOne<Employe>().WithMany().HasForeignKey(d => d.IdManager);
+
+                // Relation Employe - Adresse de cardinalités 0,1 - 1,1
+                entity.HasOne<Adresse>().WithOne().HasForeignKey<Employe>(d => d.IdAdresse)
+                    .OnDelete(DeleteBehavior.NoAction);
+
             });
 
             modelBuilder.Entity<Affectation>(entity =>
@@ -64,6 +71,7 @@ namespace Northwind2.Data
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
                 entity.Property(e => e.Nom).HasMaxLength(40);
+
             });
 
             modelBuilder.Entity<Territoire>(entity =>
@@ -73,8 +81,18 @@ namespace Northwind2.Data
 
                 entity.Property(e => e.Id).HasMaxLength(20).IsUnicode(false);
                 entity.Property(e => e.Nom).HasMaxLength(40);
+
+                entity.HasOne<Region>().WithMany().HasForeignKey(d => d.IdRegion)
+                      .OnDelete(DeleteBehavior.NoAction);
+
+
+                // Crée la relation N-N avec Employe en utilisant l'entité Affectation comme entité d'association
+                entity.HasMany<Employe>().WithMany().UsingEntity<Affectation>(
+                    l => l.HasOne<Employe>().WithMany().HasForeignKey(a => a.IdEmploye),
+                    r => r.HasOne<Territoire>().WithMany().HasForeignKey(a => a.IdTerritoire));
             });
         }
+
 
 
 
